@@ -10,19 +10,20 @@ template.innerHTML = `
   <style>
 
   </style>
-
+<form id="form">
   <input id="input" type="text"/>
-  <button id="submit-button">Submit</button>
+</form>
 `
 
 customElements.define('input-field',
   /**
-   * Represents a my cat component.
+   * Represents a input field component.
    */
   class extends HTMLElement {
     #inputField
 
-    #submitButton
+    #form
+
     /**
      * Creates an instance of the current type.
      */
@@ -32,17 +33,17 @@ customElements.define('input-field',
       this.attachShadow({ mode: 'open' })
         .appendChild(template.content.cloneNode(true))
 
-        this.#inputField = this.shadowRoot.querySelector('#input')
-        this.#submitButton = this.shadowRoot.querySelector('#submit-button')
-  
-        this.#submitButton.addEventListener('click', (event) => {
-          event.preventDefault() // Förhindra sidladdning
-  
-          const inputEvent = new CustomEvent('input-field', { 
-            detail: this.#inputField.value 
-          })
-          this.dispatchEvent(inputEvent)
+      this.#inputField = this.shadowRoot.querySelector('#input')
+      this.#form = this.shadowRoot.querySelector('#form')
+
+      this.#form.addEventListener('submit', (event) => {
+        event.preventDefault()
+
+        const inputEvent = new CustomEvent('input-field', {
+          detail: this.#inputField.value
         })
-      }
+        this.dispatchEvent(inputEvent)
+      })
     }
-  )
+  }
+)

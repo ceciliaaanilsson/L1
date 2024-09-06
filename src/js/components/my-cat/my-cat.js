@@ -34,31 +34,42 @@ template.innerHTML = `
       opacity: 0;
       z-index: 1;
       height: 300px;
-      top: 80px;
+      top: 120px;
     }
 
-    #cat-img-closed {
-
+    .container {
+      max-width: 300px;
+      max-height: 450px;
     }
   </style>
 <div class="container">
+  <p id="output"></p>
   <img id="cat-img-closed" src="../img/krippa.png"/>
   <img id="cat-img-open" src="../img/yawn_head.png"/>
+  <p>Enter your name:</p>
   <input-field class="input"></input-field>
 </div>
 `
 
 customElements.define('my-cat',
+  /**
+   * Represents a my cat component.
+   */
   class extends HTMLElement {
     #inputField
+
     #catImgOpen
-    #catImgClosed
 
     #isMouthOpen = false
 
     #talkingInterval
 
-    constructor() {
+    #output
+
+    /**
+     * Creates an instance of the current type.
+     */
+    constructor () {
       super()
 
       this.attachShadow({ mode: 'open' })
@@ -66,17 +77,25 @@ customElements.define('my-cat',
 
       this.#inputField = this.shadowRoot.querySelector('.input')
       this.#catImgOpen = this.shadowRoot.querySelector('#cat-img-open')
-      this.#catImgClosed = this.shadowRoot.querySelector('#cat-img-closed')
+      this.#output = this.shadowRoot.querySelector('#output')
 
-      this.#inputField.addEventListener('input-field', () => {
-        this.#startTalking()
+      this.#inputField.addEventListener('input-field', (e) => {
+        this.#startTalking(e.detail)
       })
     }
 
-    #startTalking() {
+    /**
+     * Starts the talking interval.
+     *
+     * @param {string} name - The users name.
+     */
+    #startTalking (name) {
       if (this.#talkingInterval) {
         clearInterval(this.#talkingInterval)
+        this.#output.textContent = ''
       }
+
+      this.#output.textContent = `Hi ${name}! So nice to meet you. I am the talking cat!`
 
       this.#talkingInterval = setInterval(() => {
         this.#toggleMouth()
@@ -86,10 +105,13 @@ customElements.define('my-cat',
         clearInterval(this.#talkingInterval)
         this.#catImgOpen.style.opacity = '0'
         this.#isMouthOpen = false
-      }, 2000)
+      }, 6000)
     }
 
-    #toggleMouth() {
+    /**
+     * Toggles the cats mouth.
+     */
+    #toggleMouth () {
       if (this.#isMouthOpen) {
         this.#catImgOpen.style.opacity = '0'
       } else {
